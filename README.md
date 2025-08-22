@@ -78,7 +78,63 @@ Include the header in your C++ code:
 
 ### Example
 
-The `examples/demo.cpp` file demonstrates basic usage. To build and run the demo, enable the `BUILD_EXAMPLES` option:
+The `examples/demo.cpp` file demonstrates basic usage. Below are code snippets that show how to use the library for common tasks:
+
+#### Encoding a Private Key to WIF
+
+```cpp
+#include "bitcoin_key_utils.h"
+using namespace BitcoinKeyUtils;
+
+std::string privHex = "0C28FCA386C7A227600B2FE50B7CAE11EC86D3BF1FBE471BE89827E19D72AA1D";
+auto privateKey = HexToBytes(privHex);
+auto wifCompressed = EncodeWIF(privateKey, true);
+if (wifCompressed) {
+    std::cout << "WIF (compressed): " << *wifCompressed << std::endl;
+    // Expected: KwdMAjGmerYanjeui5SHS7JkmpZvVipYvB2LJGU1ZxJwYvP98617
+} else {
+    std::cerr << "WIF encoding failed: " << wifCompressed.error().message << std::endl;
+}
+```
+
+#### Generating a Public Key Hash
+
+```cpp
+#include "bitcoin_key_utils.h"
+using namespace BitcoinKeyUtils;
+
+std::string pubHexCom = "02D0DE0AAEAEFAD02B8BDC8A01A1B8B11C696BD3D66A2C5F10780D95B7DF42645C";
+auto pubKey = HexToBytes(pubHexCom);
+auto pubKeyHashExp = HashRIPEMD160SHA256(pubKey);
+if (pubKeyHashExp) {
+    std::cout << "PubKey HASH160 (hex): " << BytesToHex(*pubKeyHashExp) << std::endl;
+    // Expected: d9351dcbad5b8f3b8bfa2f2cdc85c28118ca9326
+} else {
+    std::cerr << "Hash160 failed: " << pubKeyHashExp.error().message << std::endl;
+}
+```
+
+#### Generating P2PKH and P2WPKH Addresses
+
+```cpp
+#include "bitcoin_key_utils.h"
+using namespace BitcoinKeyUtils;
+
+auto pubKeyHash = *HashRIPEMD160SHA256(pubKey);
+auto p2pkh = GenerateP2PKHAddress(pubKeyHash);
+if (p2pkh) {
+    std::cout << "P2PKH address: " << *p2pkh << std::endl;
+    // Expected: 1LoVGDgRs9hTfTNJNuXKSpywcbdvwRXpmK
+}
+
+auto p2wpkh = GenerateP2WPKHAddress(pubKeyHash);
+if (p2wpkh) {
+    std::cout << "P2WPKH (bech32) address: " << *p2wpkh << std::endl;
+    // Expected: bc1qmy63mjadtw8nhzl69ukdepwzsyvv4yex5qlmkd
+}
+```
+
+To build and run the full demo, enable the `BUILD_EXAMPLES` option:
 
 ```bash
 cmake .. -DBUILD_EXAMPLES=ON
