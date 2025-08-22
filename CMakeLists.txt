@@ -52,6 +52,7 @@ set(LIB_SOURCES
     external/bitcoin-core/base58.cpp
     external/bitcoin-core/bech32.cpp
     external/bitcoin-core/crypto/sha256.cpp
+    external/bitcoin-core/crypto/sha256_sse4.cpp
     external/bitcoin-core/crypto/hex_base.cpp
     external/bitcoin-core/crypto/ripemd160.cpp
     external/bitcoin-core/util/strencodings.cpp

@@ -20,6 +20,7 @@ FILES=(
   "src/base58.cpp"
   "src/bech32.cpp"
   "src/crypto/sha256.cpp"
+  "src/crypto/sha256_sse4.cpp"
   "src/crypto/ripemd160.cpp"
   "src/crypto/hex_base.cpp"
   "src/util/strencodings.cpp"
