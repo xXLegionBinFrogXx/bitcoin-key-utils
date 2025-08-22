@@ -1,6 +1,6 @@
 #include "bitcoin_key_utils.h"
 #include <cstring>
-
+#include <stdexcept>
 #include "base58.h"
 #include "bech32.h"
 #include "crypto/sha256.h"
@@ -77,10 +77,26 @@ std::expected<std::string, Error> GenerateP2WPKHAddress(const std::vector<uint8_
         return std::unexpected(Error{ErrorCode::InvalidHRP, "Invalid HRP for Bech32 encoding: empty or too long"});
     }
 
-    for (char c : hrp) {
-        if (!((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))) {
-            return std::unexpected(Error{ErrorCode::InvalidHRP,"Invalid HRP contains forbidden characters: " + std::string(hrp)});
+      // Reject mixed-case input (decoder MUST reject mixed-case per BIP-173)
+    bool hasLower = std::any_of(hrp.begin(), hrp.end(), [](unsigned char c){ return std::islower(c); });
+    bool hasUpper = std::any_of(hrp.begin(), hrp.end(), [](unsigned char c){ return std::isupper(c); });
+    if (hasLower && hasUpper) {
+        return std::unexpected(Error{ErrorCode::InvalidHRP, "Mixed-case HRP not allowed"});
+    }
+
+    // Normalize to lowercase for encoding (encoders MUST output lowercase)
+    std::string hrp_lc;
+    hrp_lc.reserve(hrp.size());
+    for (unsigned char c : hrp) {
+        if (c < 33 || c > 126) { // printable US-ASCII only
+            return std::unexpected(Error{ErrorCode::InvalidHRP, "HRP contains non-printable ASCII"});
         }
+        hrp_lc.push_back(static_cast<char>(std::tolower(c)));
+    }
+
+        // If this function is specifically for Segwit v0 addresses, enforce network HRP:
+    if (!(hrp_lc == "bc" || hrp_lc == "tb")) {
+        return std::unexpected(Error{ErrorCode::InvalidHRP, "Segwit v0 HRP must be 'bc' or 'tb'"});
     }
 
     std::vector<uint8_t> conv_data;
@@ -89,13 +105,17 @@ std::expected<std::string, Error> GenerateP2WPKHAddress(const std::vector<uint8_
         return std::unexpected(Error{ErrorCode::Bech32BitConversionFailed,"Failed to convert bits for Bech32 encoding"});
     }
 
-    std::vector<uint8_t> data;
-    data.push_back(Constants::WitnessVersion0);
-    data.insert(data.end(), conv_data.begin(), conv_data.end());
-    std::string address = bech32::Encode(bech32::Encoding::BECH32, std::string(hrp), data);
+    if (conv_data.size() != 32) { // 160 bits / 5 bits per value = 32 values
+        return std::unexpected(Error{ErrorCode::Bech32BitConversionFailed, "Invalid number of 5-bit values after conversion: " + std::to_string(conv_data.size()) + ", expected: 32"});
+    }
 
+    std::vector<uint8_t> data;
+    data.push_back(Constants::WitnessVersion0); // must be integer 0, not '0'
+    data.insert(data.end(), conv_data.begin(), conv_data.end());
+
+    std::string address = bech32::Encode(bech32::Encoding::BECH32, hrp_lc, data);
     if (address.empty()) {
-        return std::unexpected(Error{ErrorCode::Bech32EncodingFailed,"Failed to encode Bech32 address"});
+        return std::unexpected(Error{ErrorCode::Bech32EncodingFailed, "Bech32 encoding failed"});
     }
 
     return address;

@@ -1,6 +1,8 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include "bitcoin_key_utils.h"
+#include "base58.h"
+#include "bech32.h"
 
 std::vector<uint8_t> HexToBytes(const std::string& hex) {
     if (hex.size() % 2 != 0) {
@@ -103,5 +105,26 @@ TEST_CASE("P2PKH / P2WPKH addresses from known pubkey hashes") {
         auto p2wpkh = BitcoinKeyUtils::GenerateP2WPKHAddress(h160, "bc");
         REQUIRE(p2wpkh.has_value());
         CHECK_EQ(*p2wpkh, v.expected_p2wpkh);
+    }
+}
+
+TEST_CASE("BIP-173: uppercase valid, mixed-case invalid (decoder behavior)") {
+    // Valid: all-uppercase Segwit v0 P2WPKH (BIP-173 test vector)
+    {
+        const std::string addr = "BC1QW508D6QEJXTDG4Y5R3ZARVARY0C5XW7KV8F3T4";
+        auto dec = bech32::Decode(addr);  // your bech32 lib may return an optional/struct/tuple
+        // The following checks are indicative; adapt to your bech32 API.
+        CHECK(dec.encoding == bech32::Encoding::BECH32);   // version 0 uses BECH32, not BECH32m
+        CHECK(dec.hrp == "bc");                            // many decoders normalize HRP to lowercase
+        CHECK_FALSE(dec.data.empty());
+        // First data value is witness version (0..16); for this vector it's 0
+        CHECK(dec.data.front() == 0);
+    }
+
+    // Invalid: mixed-case MUST be rejected (BIP-173 test vector)
+    {
+        const std::string mixed = "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sL5k7";
+        auto dec = bech32::Decode(mixed);
+        CHECK(dec.encoding == bech32::Encoding::INVALID);  
     }
 }
