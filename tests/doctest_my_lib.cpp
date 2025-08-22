@@ -26,14 +26,6 @@ std::vector<uint8_t> HexToBytes(const std::string& hex) {
     return bytes;
 }
 
-TEST_CASE("convert round-trip") {
-  std::array<uint8_t, 7> src{0,1,2,3,4,5,6};
-  auto vec = BitcoinKeyUtils::ConvertToByteVector(src);
-  std::array<uint8_t, 7> out{};
-  BitcoinKeyUtils::ConvertFromByteVector(vec, out);
-  CHECK(std::equal(src.begin(), src.end(), out.begin(), out.end()));
-}
-
 TEST_CASE("EncodeWIF invalid size") {
   std::vector<uint8_t> pk(31, 0x00);
   auto w = BitcoinKeyUtils::EncodeWIF(pk, false);

@@ -9,18 +9,6 @@
 
 namespace BitcoinKeyUtils {
 
-std::vector<uint8_t> ConvertToByteVector(std::span<const uint8_t> data) {
-    return std::vector<uint8_t>(data.begin(), data.end());
-}
-
-//TODO : improve this method
-void ConvertFromByteVector(const std::vector<uint8_t>& data, std::span<uint8_t> output) {
-    if (output.size() < data.size()) {
-        throw std::length_error("Output span is too small");
-    }
-    std::memcpy(output.data(), data.data(), data.size());
-}
-
 std::expected<std::string, Error> EncodeWIF(const std::vector<uint8_t>& privateKey,bool compressed) {
     if (privateKey.size() != Constants::PrivateKeySize) {
         return std::unexpected(Error{ErrorCode::InvalidPrivateKeySize, "Invalid private key size for WIF encoding: " + std::to_string(privateKey.size()) +", expected: " + std::to_string(Constants::PrivateKeySize)});

@@ -35,20 +35,6 @@ struct Error {
     std::string message;
 };
 
-/**
- * @brief Converts raw data into a vector of bytes.
- * @param data Input data as span of bytes.
- * @return A vector of bytes.
- */
-std::vector<uint8_t> ConvertToByteVector(std::span<const uint8_t> data);
-
-/**
- * @brief Converts a vector of bytes into raw data.
- * @param data Input vector of bytes.
- * @param output Output span where the bytes will be copied.
- * @throw std::length_error if output span is too small.
- */
-void ConvertFromByteVector(const std::vector<uint8_t>& data, std::span<uint8_t> output);
 
 /**
  * @brief Encode a private key into Wallet Import Format (WIF).
