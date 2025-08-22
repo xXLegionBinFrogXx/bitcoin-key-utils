@@ -142,6 +142,23 @@ cmake --build .
 ./demo
 ```
 
+
+## Error Codes
+
+All recoverable errors are reported via the `ErrorCode` enum. Each API that returns `std::expected` uses these codes to explain why the operation failed.
+
+| Error Code                      | Meaning                                           | Typical Cause                                                      |
+| ------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------ |
+| **`InvalidPrivateKeySize`**     | The private key length is not 32 bytes.           | Passing in a malformed or truncated private key.                   |
+| **`Base58CheckEncodingFailed`** | Failed to encode or decode Base58Check.           | Input data is invalid or checksum mismatch.                        |
+| **`EmptyData`**                 | Input data is empty where non-empty was required. | Attempting to hash or encode an empty vector.                      |
+| **`Hash160SizeMismatch`**       | Hash160 must be exactly 20 bytes.                 | Wrongly sized data provided to a function expecting a pubkey hash. |
+| **`InvalidPubKeyHashSize`**     | Public key hash is not 20 bytes.                  | Supplying incorrectly sized key material to address generation.    |
+| **`InvalidHRP`**                | Human-readable prefix for Bech32 is invalid.      | Using an unsupported or empty HRP string.                          |
+| **`Bech32BitConversionFailed`** | Conversion from 8-bit to 5-bit groups failed.     | Internal encoding error or invalid input data.                     |
+| **`Bech32EncodingFailed`**      | Final Bech32 string encoding failed.              | Input could not represented in Bech32 format.                      |
+
+
 ## Dependencies
 
 The library uses curated sources from Bitcoin Core, which are automatically fetched or updated by the `scripts/update_bitcoin_core.sh` script during the build process. The following Bitcoin Core components are included:
