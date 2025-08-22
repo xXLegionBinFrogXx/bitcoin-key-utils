@@ -41,5 +41,5 @@
 *.dwo
 
 build/
-
+.vscode/
 .DS_Store
