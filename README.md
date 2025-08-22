@@ -1,6 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CMake](https://img.shields.io/badge/CMake-3.24+-blue.svg)](https://cmake.org/)
 [![C++23](https://img.shields.io/badge/C++-23-blue?logo=cplusplus)](https://en.wikipedia.org/wiki/C%2B%2B23)
+[![Build](https://github.com/xXLegionBinFrogXx/bitcoin-key-utils/actions/workflows/build.yml/badge.svg)](https://github.com/xXLegionBinFrogXx/bitcoin-key-utils/actions/workflows/build.yml)
 
 # BitcoinKeyUtils
 
