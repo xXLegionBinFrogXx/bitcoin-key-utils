@@ -10,13 +10,13 @@
 namespace BitcoinKeyUtils {
 
 namespace Constants {
-    constexpr uint8_t MainNet = 0x80;
-    constexpr uint8_t CompressMagic = 0x01;
-    constexpr uint8_t P2PKHPrefix = 0x00;
-    constexpr uint8_t WitnessVersion0 = 0x00;
-    constexpr int PrivateKeySize = 32;
-    constexpr int Hash160Size = 20;
-    constexpr std::string_view Bech32MainnetHRP = "bc";
+    inline constexpr uint8_t MainNet = 0x80;
+    inline constexpr uint8_t CompressMagic = 0x01;
+    inline constexpr uint8_t P2PKHPrefix = 0x00;
+    inline constexpr uint8_t WitnessVersion0 = 0x00;
+    inline constexpr int PrivateKeySize = 32;
+    inline constexpr int Hash160Size = 20;
+    inline constexpr std::string_view Bech32MainnetHRP = "bc";
 }
 
 enum class ErrorCode {
