@@ -83,7 +83,7 @@ if(BUILD_SHARED)
 
   set_target_properties(bitcoin_key_utils-shared PROPERTIES
       OUTPUT_NAME bitcoin_key_utils
-      EXPORT_NAME bitcoin_key_utils::shared
+      EXPORT_NAME shared
       VERSION ${PROJECT_VERSION}
       SOVERSION ${PROJECT_VERSION_MAJOR}  
   )
@@ -121,7 +121,7 @@ if(BUILD_STATIC)
 add_library(bitcoin_key_utils-static STATIC ${LIB_SOURCES})
 set_target_properties(bitcoin_key_utils-static PROPERTIES
     OUTPUT_NAME bitcoin_key_utils
-    EXPORT_NAME bitcoin_key_utils::static
+    EXPORT_NAME static
 )
 target_include_directories(bitcoin_key_utils-static
     PUBLIC
@@ -168,7 +168,8 @@ install(TARGETS bitcoin_key_utils-static bitcoin_key_utils-shared
 )
 
 
-install(EXPORT BitcoinKeyUtilsTargets
+install(
+    EXPORT BitcoinKeyUtilsTargets
     FILE BitcoinKeyUtilsTargets.cmake
     NAMESPACE BitcoinKeyUtils::
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BitcoinKeyUtils

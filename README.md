@@ -24,7 +24,7 @@ BitcoinKeyUtils is a C++ library for handling operations related to Bitcoin. Inc
 
 ```bash
 git clone <repository-url>
-cd BitcoinKeyUtils
+cd bitcoin-key-utils
 ```
 
 ### Configure and Build
@@ -64,7 +64,10 @@ To use BitcoinKeyUtils in a CMake project, link against either the static or sha
 
 ```cmake
 find_package(BitcoinKeyUtils REQUIRED)
-target_link_libraries(your_target PRIVATE BitcoinKeyUtils::Static)  # or BitcoinKeyUtils::Shared
+
+target_link_libraries(your_target PRIVATE BitcoinKeyUtils::static)
+# or:
+target_link_libraries(your_target PRIVATE BitcoinKeyUtils::shared)
 ```
 
 Include the header in your C++ code:
@@ -80,7 +83,7 @@ The `examples/demo.cpp` file demonstrates basic usage. To build and run the demo
 ```bash
 cmake .. -DBUILD_EXAMPLES=ON
 cmake --build .
-./build/bin/demo
+./demo
 ```
 
 ## Dependencies
