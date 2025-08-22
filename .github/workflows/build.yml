@@ -1,0 +1,64 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show runner info
+        run: |
+          uname -a
+          cat /etc/os-release || true
+
+      - name: Install toolchain (gcc-13, ninja, ccache)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++-13 gcc-13 ninja-build ccache
+          echo "CC=gcc-13"  >> $GITHUB_ENV
+          echo "CXX=g++-13" >> $GITHUB_ENV
+
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ccache
+          key: ${{ runner.os }}-ccache-${{ hashFiles('**/CMakeLists.txt') }}-${{ env.BUILD_TYPE }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-
+
+      # curated btc core sources under external/bitcoin-core.
+      # cache them - no work on most runs.
+      - name: Cache curated Bitcoin Core sources
+        uses: actions/cache@v4
+        with:
+          path: external/bitcoin-core
+          key: ${{ runner.os }}-btc-core-${{ hashFiles('scripts/update_bitcoin_core.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-btc-core-
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DBUILD_TESTS=ON \
+            -DBUILD_EXAMPLES=ON \
+            -DCMAKE_C_COMPILER=${{ env.CC }} \
+            -DCMAKE_CXX_COMPILER=${{ env.CXX }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: Build
+        run: cmake --build build --config ${{ env.BUILD_TYPE }} -- -v
+
+      - name: Run tests
+        run: ctest --test-dir build -C ${{ env.BUILD_TYPE }} --output-on-failure
