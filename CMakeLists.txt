@@ -112,7 +112,7 @@ if(BUILD_SHARED)
   )
 
     
-    add_library(bitcoin_key_utils_::shared ALIAS bitcoin_key_utils-shared)
+    add_library(bitcoin_key_utils::shared ALIAS bitcoin_key_utils-shared)
 
 endif()
 
@@ -146,7 +146,7 @@ target_sources(bitcoin_key_utils-static
 )
 
 
-    add_library(bitcoin_key_utils_::static ALIAS bitcoin_key_utils-static)
+    add_library(bitcoin_key_utils::static ALIAS bitcoin_key_utils-static)
 
 endif()
 
