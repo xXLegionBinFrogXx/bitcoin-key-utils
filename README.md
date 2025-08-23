@@ -3,7 +3,7 @@
 [![C++23](https://img.shields.io/badge/C++-23-blue?logo=cplusplus)](https://en.wikipedia.org/wiki/C%2B%2B23)
 [![Build](https://github.com/xXLegionBinFrogXx/bitcoin-key-utils/actions/workflows/build.yml/badge.svg)](https://github.com/xXLegionBinFrogXx/bitcoin-key-utils/actions/workflows/build.yml)
 
-# BitcoinKeyUtils
+# bitcoin-key-utils
 
 BitcoinKeyUtils is a C++ library for handling operations related to Bitcoin. Includes Encoding/Decoding for Wallet Import Format (WIF), Base58, Bech32 operations. It uses curated list of Bitcoin Core source files for functionality.
 
