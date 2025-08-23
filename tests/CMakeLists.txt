@@ -16,7 +16,7 @@ add_executable(bitcoin_key_utils_tests
 )
 
 # Link against your static lib (keeps tests hermetic)
-target_link_libraries(bitcoin_key_utils_tests PRIVATE bitcoin_key_utils-static)
+target_link_libraries(bitcoin_key_utils_tests PRIVATE bitcoin-key-utils-static)
 
 # Include paths if tests include project headers directly
 target_include_directories(bitcoin_key_utils_tests PRIVATE
