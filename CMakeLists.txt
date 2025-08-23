@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.24)
 
 # Project definition
-project(BitcoinKeyUtils VERSION 1.0.0 LANGUAGES CXX)
+project(bitcoin-key-utils VERSION 1.0.0 LANGUAGES CXX)
 
 include(GNUInstallDirs)
 include(FetchContent)
@@ -112,7 +112,7 @@ if(BUILD_SHARED)
   )
 
     
-    add_library(BitcoinKeyUtils::shared ALIAS bitcoin-key-utils-shared)
+    add_library(bitcoin-key-utils::shared ALIAS bitcoin-key-utils-shared)
 
 endif()
 
@@ -146,7 +146,7 @@ target_sources(bitcoin-key-utils-static
 )
 
 
-    add_library(BitcoinKeyUtils::static ALIAS bitcoin-key-utils-static)
+    add_library(bitcoin-key-utils::static ALIAS bitcoin-key-utils-static)
 
 endif()
 
@@ -179,8 +179,8 @@ install(TARGETS bitcoin-key-utils-static bitcoin-key-utils-shared
 install(
     EXPORT BitcoinKeyUtilsTargets
     FILE BitcoinKeyUtilsTargets.cmake
-    NAMESPACE BitcoinKeyUtils::
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BitcoinKeyUtils
+    NAMESPACE bitcoin-key-utils::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/bitcoin-key-utils
 )
 
 
@@ -194,13 +194,13 @@ write_basic_package_version_file(
 configure_package_config_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/BitcoinKeyUtilsConfig.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/BitcoinKeyUtilsConfig.cmake"
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BitcoinKeyUtils
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/bitcoin-key-utils
 )
 
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/BitcoinKeyUtilsConfig.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/BitcoinKeyUtilsConfigVersion.cmake"
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/BitcoinKeyUtils
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/bitcoin-key-utils
 )
 
 

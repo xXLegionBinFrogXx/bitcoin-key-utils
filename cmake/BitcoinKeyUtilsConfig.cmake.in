@@ -1,4 +1,4 @@
 @PACKAGE_INIT@
 
 include("${CMAKE_CURRENT_LIST_DIR}/BitcoinKeyUtilsTargets.cmake")
-check_required_components(BitcoinKeyUtils)
+check_required_components(bitcoin-key-utils)
