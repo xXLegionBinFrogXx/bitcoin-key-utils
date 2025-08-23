@@ -82,23 +82,23 @@ set(BITCOIN_CORE_HEADERS
 # Create shared library target  
 if(BUILD_SHARED)
 
-  add_library(bitcoin_key_utils-shared SHARED ${LIB_SOURCES})
+  add_library(bitcoin-key-utils-shared SHARED ${LIB_SOURCES})
 
-  set_target_properties(bitcoin_key_utils-shared PROPERTIES
-      OUTPUT_NAME bitcoin_key_utils
+  set_target_properties(bitcoin-key-utils-shared PROPERTIES
+      OUTPUT_NAME bitcoin-key-utils
       EXPORT_NAME shared
       VERSION ${PROJECT_VERSION}
       SOVERSION ${PROJECT_VERSION_MAJOR}  
   )
 
-  target_include_directories(bitcoin_key_utils-shared
+  target_include_directories(bitcoin-key-utils-shared
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/bitcoin-core>"
         "$<INSTALL_INTERFACE:include>"
   )
   
-  target_sources(bitcoin_key_utils-shared
+  target_sources(bitcoin-key-utils-shared
       PUBLIC
           FILE_SET public_headers
           TYPE HEADERS
@@ -112,7 +112,7 @@ if(BUILD_SHARED)
   )
 
     
-    add_library(bitcoin_key_utils::shared ALIAS bitcoin_key_utils-shared)
+    add_library(BitcoinKeyUtils::shared ALIAS bitcoin-key-utils-shared)
 
 endif()
 
@@ -121,18 +121,18 @@ endif()
 
 if(BUILD_STATIC)
 
-add_library(bitcoin_key_utils-static STATIC ${LIB_SOURCES})
-set_target_properties(bitcoin_key_utils-static PROPERTIES
-    OUTPUT_NAME bitcoin_key_utils
+add_library(bitcoin-key-utils-static STATIC ${LIB_SOURCES})
+set_target_properties(bitcoin-key-utils-static PROPERTIES
+    OUTPUT_NAME bitcoin-key-utils
     EXPORT_NAME static
 )
-target_include_directories(bitcoin_key_utils-static
+target_include_directories(bitcoin-key-utils-static
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/bitcoin-core>"
         "$<INSTALL_INTERFACE:include>"
 )
-target_sources(bitcoin_key_utils-static
+target_sources(bitcoin-key-utils-static
     PUBLIC
         FILE_SET public_headers
         TYPE HEADERS
@@ -146,7 +146,7 @@ target_sources(bitcoin_key_utils-static
 )
 
 
-    add_library(bitcoin_key_utils::static ALIAS bitcoin_key_utils-static)
+    add_library(BitcoinKeyUtils::static ALIAS bitcoin-key-utils-static)
 
 endif()
 
@@ -154,7 +154,7 @@ if(BUILD_EXAMPLES)
   #use static lib for demos
 
   add_executable(demo examples/demo.cpp)
-  target_link_libraries(demo PRIVATE bitcoin_key_utils-static)
+  target_link_libraries(demo PRIVATE bitcoin-key-utils-static)
   set_target_properties(demo PROPERTIES
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
   )
@@ -167,7 +167,7 @@ if (BUILD_TESTS)
 endif()
 
 # Installation rules
-install(TARGETS bitcoin_key_utils-static bitcoin_key_utils-shared
+install(TARGETS bitcoin-key-utils-static bitcoin-key-utils-shared
     EXPORT BitcoinKeyUtilsTargets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -204,5 +204,5 @@ install(FILES
 )
 
 
-add_dependencies(bitcoin_key_utils-static update-bitcoin-core)
-add_dependencies(bitcoin_key_utils-shared update-bitcoin-core)
+add_dependencies(bitcoin-key-utils-static update-bitcoin-core)
+add_dependencies(bitcoin-key-utils-shared update-bitcoin-core)
