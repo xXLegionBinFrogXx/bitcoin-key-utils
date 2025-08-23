@@ -59,7 +59,7 @@ cmake --install .
 This installs:
 - Libraries to `${CMAKE_INSTALL_LIBDIR}` (e.g., `/usr/local/lib`)
 - Headers to `${CMAKE_INSTALL_INCLUDEDIR}/bitcoin_key_utils` and `${CMAKE_INSTALL_INCLUDEDIR}/bitcoin_core`
-- CMake package config to `${CMAKE_INSTALL_LIBDIR}/cmake/BitcoinKeyUtils`
+- CMake package config to `${CMAKE_INSTALL_LIBDIR}/cmake/bitcoin-key-utils`
 
 ## Usage
 
@@ -70,9 +70,9 @@ To use BitcoinKeyUtils in a CMake project, link against either the static or sha
 ```cmake
 find_package(BitcoinKeyUtils REQUIRED)
 
-target_link_libraries(your_target PRIVATE BitcoinKeyUtils::static)
+target_link_libraries(your_target PRIVATE bitcoin-key-utils::static)
 # or:
-target_link_libraries(your_target PRIVATE BitcoinKeyUtils::shared)
+target_link_libraries(your_target PRIVATE bitcoin-key-utils::shared)
 ```
 
 Include the header in your C++ code:
