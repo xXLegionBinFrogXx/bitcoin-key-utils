@@ -22,12 +22,16 @@ namespace Constants {
 enum class ErrorCode {
     InvalidPrivateKeySize,
     Base58CheckEncodingFailed,
+    Base58CheckDecodingFailed,
     EmptyData,
     Hash160SizeMismatch,
     InvalidPubKeyHashSize,
     InvalidHRP,
     Bech32BitConversionFailed,
-    Bech32EncodingFailed
+    Bech32EncodingFailed,
+    InvalidWIFLength,
+    InvalidCompressionFlag,
+    InvalidNetworkPrefix
 };
 
 struct Error {
@@ -43,6 +47,14 @@ struct Error {
  * @return WIF string on success, otherwise an Error.
  */
 std::expected<std::string, Error> EncodeWIF(const std::vector<uint8_t>& privateKey, bool compressed);
+
+/**
+ * @brief Decode a Wallet Import Format (WIF) string into a private key and compression flag.
+ * @param wifString The WIF-encoded string to decode.
+ * @return A pair containing the 32-byte private key and a boolean indicating if the key is compressed on success,
+ *         otherwise an Error.
+ */
+std::expected<std::pair<std::vector<uint8_t>, bool>, Error> DecodeWIF(const std::string& wifString);
 
 /**
  * @brief Compute SHA256 followed by RIPEMD160 hash of input data.

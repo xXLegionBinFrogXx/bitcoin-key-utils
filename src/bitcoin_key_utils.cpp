@@ -29,6 +29,46 @@ std::expected<std::string, Error> EncodeWIF(const std::vector<uint8_t>& privateK
     return wifString;
 }
 
+std::expected<std::pair<std::vector<uint8_t>, bool>, Error> DecodeWIF(const std::string& wifString) {
+    std::vector<uint8_t> decoded;
+    constexpr int max_ret_len = Constants::PrivateKeySize + 5;
+
+    if (!DecodeBase58Check(wifString.c_str(), decoded, max_ret_len)) {
+        return std::unexpected(Error{ErrorCode::Base58CheckDecodingFailed, "Base58Check decoding failed"});
+    }
+
+    if (decoded.size() < Constants::PrivateKeySize + 1) {
+        return std::unexpected(Error{ErrorCode::InvalidWIFLength, 
+            "Invalid WIF decoded length: " + std::to_string(decoded.size()) + 
+            ", expected at least: " + std::to_string(Constants::PrivateKeySize + 1)});
+    }
+
+    if (decoded[0] != Constants::MainNet) {
+        return std::unexpected(Error{ErrorCode::InvalidNetworkPrefix, 
+            "Invalid network prefix: " + std::to_string(decoded[0]) + 
+            ", expected: " + std::to_string(Constants::MainNet)});
+    }
+
+    bool compressed = false;
+    size_t expectedSize = Constants::PrivateKeySize + 1;
+    if (decoded.size() == expectedSize + 1) {
+        if (decoded.back() == Constants::CompressMagic) {
+            compressed = true;
+        } else {
+            return std::unexpected(Error{ErrorCode::InvalidCompressionFlag, 
+                "Invalid compression flag: " + std::to_string(decoded.back())});
+        }
+    } else if (decoded.size() != expectedSize) {
+        return std::unexpected(Error{ErrorCode::InvalidWIFLength,"Invalid WIF decoded length: " + std::to_string(decoded.size()) + 
+            ", expected: " + std::to_string(expectedSize) + " or " + std::to_string(expectedSize + 1)});
+    }
+
+    std::vector<uint8_t> privateKey(decoded.begin() + 1, decoded.begin() + 1 + Constants::PrivateKeySize);
+    
+    return std::make_pair(privateKey, compressed);
+}
+
+
 std::expected<std::vector<uint8_t>, Error> HashRIPEMD160SHA256(const std::vector<uint8_t>& data) {
 
     if (data.empty()) {
