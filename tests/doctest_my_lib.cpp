@@ -28,6 +28,15 @@ std::vector<uint8_t> HexToBytes(const std::string& hex) {
     return bytes;
 }
 
+std::string HexFromBytes(const std::vector<unsigned char>& bytes) {
+    std::ostringstream oss;
+    oss << std::hex << std::setfill('0');
+    for (unsigned char byte : bytes) {
+        oss << std::setw(2) << static_cast<int>(byte);
+    }
+    return oss.str();
+}
+
 TEST_CASE("EncodeWIF invalid size") {
   std::vector<uint8_t> pk(31, 0x00);
   auto w = BitcoinKeyUtils::EncodeWIF(pk, false);
@@ -52,6 +61,51 @@ TEST_CASE("EncodeWIF known vectors") {
     auto wif3 = BitcoinKeyUtils::EncodeWIF(pk3, true);
     REQUIRE(wif3.has_value());
     CHECK_EQ(*wif3, "KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73Nd2Mcv1");
+
+    auto pk4 = HexToBytes("4f60fb48b2419f2e52332d00ef86923c");
+    auto wif4 = BitcoinKeyUtils::EncodeWIF(pk4, true);
+    REQUIRE(!wif4.has_value());
+    CHECK_EQ(wif4.error().code, BitcoinKeyUtils::ErrorCode::InvalidPrivateKeySize);
+
+}
+
+TEST_CASE("DecodeWIF know vectors"){
+
+    auto wif1 = "L1VUUocWhhKU2cFaHw9JLjzpCbnMwPRmf3FvmCFb3TZhHEiBkmQf";
+    auto result1 = BitcoinKeyUtils::DecodeWIF(wif1);
+    REQUIRE(result1.has_value());
+    CHECK_EQ(HexFromBytes(result1->first), "7f7583a17e617ff534c245f38af4f67312628e8508da78201047473f39c9ebf3");
+    CHECK_EQ(result1->second, true);
+
+    // compressed = false
+    auto wif2 = "5KKvtwcZrMNjbJv9Q6YM5Wo78KKdvn32tvx2kqz5oATFSLMvqCc";
+    auto result2 = BitcoinKeyUtils::DecodeWIF(wif2);
+    REQUIRE(result2.has_value());
+    CHECK_EQ(HexFromBytes(result2->first), "c70145adffa528434a000c56cca3f5b6b91264f6e44f13752b97d473a1870a80");
+    CHECK_EQ(result2->second, false);
+
+    //testnet
+    auto wif3 = "91dfcpRP4MS9jebKKaqLwVTM9xa3SK93stmvYPkSKej4DymAXXK";
+    auto result3 = BitcoinKeyUtils::DecodeWIF(wif3);
+    REQUIRE(!result3.has_value());
+    CHECK_EQ(result3.error().code, BitcoinKeyUtils::ErrorCode::InvalidNetworkPrefix);
+    
+    //incorrect wif
+    auto wif4 = "5Hs335bqU9N1mb62hEwS4tuPWJDLH9brXwuyTmPvyuz1StBzsBD";
+    auto result4 = BitcoinKeyUtils::DecodeWIF(wif4);
+    REQUIRE(!result4.has_value());
+    CHECK_EQ(result4.error().code, BitcoinKeyUtils::ErrorCode::Base58CheckDecodingFailed);
+
+    auto wif5 = "KwDiBf89QgGbjEhKnhX";
+    auto result5 = BitcoinKeyUtils::DecodeWIF(wif5);
+    REQUIRE(!result5.has_value());
+    CHECK_EQ(result5.error().code, BitcoinKeyUtils::ErrorCode::Base58CheckDecodingFailed);
+
+    auto wif6 = "L1VUUocWhhKU2cFaHw9JLjzpCbnMwPRmf3FvmCFb3TZhHEiBkmQ=";
+    auto result6 = BitcoinKeyUtils::DecodeWIF(wif6);
+    REQUIRE(!result6.has_value());
+    CHECK_EQ(result6.error().code, BitcoinKeyUtils::ErrorCode::Base58CheckDecodingFailed);
+
 }
 
 
